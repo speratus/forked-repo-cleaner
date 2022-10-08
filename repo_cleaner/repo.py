@@ -1,3 +1,6 @@
+import requests
+
+
 class Repo:
 
     def __init__(self, raw_data):
@@ -10,3 +13,7 @@ class Repo:
         if self.is_fork and 'parent' in raw_data:
             self.parent_set = True
             self.parent_owner = raw_data['parent']['owner']['login']
+            self.parent_data = raw_data['parent']
+
+    def delete(self, access_key):
+        return requests.delete(self.url, auth={'username': self.owner, 'token': access_key})
