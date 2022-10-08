@@ -17,3 +17,11 @@ class Repo:
 
     def delete(self, access_key):
         return requests.delete(self.url, auth={'username': self.owner, 'token': access_key})
+
+    def get_full_repo(self, access_key=''):
+        args = {}
+        if len(access_key) > 0:
+            auth = {'username': self.owner, 'token': access_key}
+            args['auth'] = auth
+
+        return requests.get(self.url, **args)
