@@ -9,6 +9,7 @@ class Repo:
         self.is_fork = 'fork' in raw_data and raw_data['fork']
         self.parent_set = False
         self.url = raw_data['url']
+        self.raw_data = raw_data
 
         if self.is_fork and 'parent' in raw_data:
             self.parent_set = True
@@ -27,11 +28,14 @@ class Repo:
         return requests.get(self.url, **args).json()
 
     def load_repo_details(self, access_key=''):
-        repo_details = self.get_full_repo(access_key)
+        if not self.parent_set:
+            repo_details = self.get_full_repo(access_key)
 
-        if repo_details['fork'] and 'parent' in repo_details:
-            self.parent_set = True
-            self.parent_owner = repo_details['parent']['owner']['login']
-            self.parent_data = repo_details['parent']
+            if repo_details['fork'] and 'parent' in repo_details:
+                self.parent_set = True
+                self.parent_owner = repo_details['parent']['owner']['login']
+                self.parent_data = repo_details['parent']
+        else:
+            repo_details = self.raw_data
 
         return repo_details
