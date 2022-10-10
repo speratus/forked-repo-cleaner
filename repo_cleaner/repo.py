@@ -25,3 +25,13 @@ class Repo:
             args['auth'] = auth
 
         return requests.get(self.url, **args)
+
+    def load_repo_details(self, access_key=''):
+        repo_details = self.get_full_repo(access_key)
+
+        if repo_details['fork'] and 'parent' in repo_details:
+            self.parent_set = True
+            self.parent_owner = repo_details['parent']['owner']['login']
+            self.parent_data = repo_details['parent']
+
+        return repo_details
