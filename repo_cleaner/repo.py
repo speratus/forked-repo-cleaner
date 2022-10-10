@@ -24,7 +24,7 @@ class Repo:
             auth = {'username': self.owner, 'token': access_key}
             args['auth'] = auth
 
-        return requests.get(self.url, **args)
+        return requests.get(self.url, **args).json()
 
     def load_repo_details(self, access_key=''):
         repo_details = self.get_full_repo(access_key)
