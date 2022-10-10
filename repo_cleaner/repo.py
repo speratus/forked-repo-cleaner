@@ -30,6 +30,7 @@ class Repo:
     def load_repo_details(self, access_key=''):
         if not self.parent_set:
             repo_details = self.get_full_repo(access_key)
+            self.raw_data = repo_details
 
             if repo_details['fork'] and 'parent' in repo_details:
                 self.parent_set = True
