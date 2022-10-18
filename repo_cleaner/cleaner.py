@@ -28,13 +28,10 @@ class Cleaner:
                 self.forked_repo_owner = args[1]
 
     def auth(self):
-        auth = {}
-
         if self.access_key != '':
-            auth['username'] = self.owner_name
-            auth['token'] = self.access_key
-
-        return auth
+            return self.owner_name, self.access_key
+        else:
+            return ()
 
     def raw_list_repos(self):
         list_url = self.url_builder.list_repos(self.owner_name)
@@ -51,7 +48,7 @@ class Cleaner:
         def filter_func(r: Repo):
             return r.is_fork
 
-        return filter(filter_func, repo_list)
+        return list(filter(filter_func, repo_list))
 
     def forked_from_stored_owner(self, repos):
         if self.forked_repo_owner is None:
@@ -60,7 +57,7 @@ class Cleaner:
         def filter_func(r: Repo):
             return r.parent_owner == self.forked_repo_owner
 
-        return filter(filter_func, repos)
+        return list(filter(filter_func, repos))
 
     def run(self):
         repos = self.list_repos()
