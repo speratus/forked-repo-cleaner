@@ -1,4 +1,6 @@
 import requests
+import time
+import random
 
 from .urls import UrlBuilder
 from .repo import Repo
@@ -24,9 +26,6 @@ class Cleaner:
             self.owner_name = args[0]
             if len(self.args) == 2:
                 self.forked_repo_owner = args[1]
-
-    def cleanup_repos(self):
-        pass
 
     def auth(self):
         auth = {}
@@ -62,6 +61,34 @@ class Cleaner:
             return r.parent_owner == self.forked_repo_owner
 
         return filter(filter_func, repos)
+
+    def run(self):
+        repos = self.list_repos()
+
+        if len(repos) <= 0:
+            print("No forked repos found! Exiting.")
+            return
+
+        forked_repos = Cleaner.forked_repos(repos)
+
+        if self.forked_repo_owner:
+            forked_repos = self.forked_from_stored_owner(forked_repos)
+
+        if len(forked_repos) <= 0:
+            print(f"No Repos forked from user {self.forked_repo_owner}! Exiting.")
+            return
+
+        max_sleep = self.max_sleep_time
+
+        if not self.do_random_sleep:
+            max_sleep = 0
+
+        for r in forked_repos:
+            sleep_time = random.randrange(max_sleep)
+            print(f"sleeping for {sleep_time} seconds.")
+            time.sleep(sleep_time)
+            r.delete(self.access_key)
+            print(f"Deleted repo {r.name}")
 
 
 
